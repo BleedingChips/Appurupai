@@ -1,11 +1,13 @@
 #include "../..//Appurupai/syntax.h"
 #include <iostream>
 
+// Non-Terminator
 enum class Noterminal
 {
 	Exp = 0,
 }; 
 
+// Terminator
 enum class Terminal
 {
 	Num = 1,
@@ -77,19 +79,25 @@ void print_symbol_imp(Appurupai::ast_node<Noterminal, Terminal>& a, size_t layou
 int main()
 {
 	Appurupai::LR1<Noterminal, Terminal> lr1{
+		// start symbol
 		Noterminal::Exp,
 	{
+		// production rules {non-terminator, {production} }
 		{Noterminal::Exp, {Terminal::Num}},
 		{Noterminal::Exp, {Noterminal::Exp, Terminal::Add, Noterminal::Exp}},
 		{Noterminal::Exp, {Noterminal::Exp, Terminal::Multi, Noterminal::Exp}},
 	},
+	// priority
 	{{Terminal::Multi}, {Terminal::Add}}
 	};
 	
+	// define input terminator stream
 	std::vector<Terminal> t = { Terminal::Num, Terminal::Add, Terminal::Num, Terminal::Multi, Terminal::Num };
 
 	try {
+		// generate AST
 		auto re = Appurupai::generate_ast(lr1, t.begin(), t.end());
+
 		print_symbol_imp(re);
 	}
 	catch (const Appurupai::Error::generate_ast_unacceptable_error<Noterminal, Terminal>& e)
