@@ -1,109 +1,76 @@
-#include "../..//Appurupai/syntax.h"
+#include "../../Potato/parser.h"
+#include <assert.h>
 #include <iostream>
 
-// Non-Terminator
-enum class Noterminal
-{
-	Exp = 0,
-}; 
 
-// Terminator
-enum class Terminal
-{
-	Num = 1,
-	Add,
-	Multi
-};
+std::u32string SBNF = UR"(
+_IGNORE := '\s+'
+Number := '[1-9][0-9]*'
+%%%
+$ := <Statement>
+<Statement> := Number
+<Statement> := <Statement> '+' <Statement> [1]
+<Statement> := <Statement> '*' <Statement> [2]
+<Statement> := <Statement> '/' <Statement> [3]
+<Statement> := <Statement> '-' <Statement> [4]
+<Statement> := '(' <Statement> ')'
+%%%
+('/' '*') ('+' '-')
+)";
 
-void print_symbol(Noterminal sym)
+
+int to_int(std::u32string_view code)
 {
-	switch (sym)
+	int data = 0;
+	for (auto ite : code)
 	{
-	case Noterminal::Exp:
-		std::cout << "Exp";
-		break;
-	default:
-		assert(false);
+		data = data * 10 + ite - U'0';
 	}
+	return data;
 }
 
-void print_symbol(Terminal sym)
-{
-	switch (sym)
-	{
-	case Terminal::Num:
-		std::cout << "Num"; break;
-	case Terminal::Add:
-		std::cout << "Add"; break;
-	case Terminal::Multi:
-		std::cout << "Multi"; break;
-	default:
-		assert(false);
-	}
-}
-
-void print_symbol_imp(Appurupai::ast_node<Noterminal, Terminal>& a, size_t layout = 0)
-{
-	for (size_t i = 0; i < layout; ++i)
-		std::cout << "-";
-	print_symbol(a.symbol());
-	std::cout << " : ";
-	for (size_t i = 0; i < a.size(); ++i)
-	{
-		auto& re = a[i];
-		if (std::holds_alternative<Appurupai::ast_node<Noterminal, Terminal>>(re))
-		{
-			auto& p = std::get<Appurupai::ast_node<Noterminal, Terminal>>(re);
-			std::cout << " ";
-			print_symbol(p.symbol());
-		}
-		else if (std::holds_alternative<Appurupai::ast_node_terminal<Terminal>>(re))
-		{
-			auto& p = std::get<Appurupai::ast_node_terminal<Terminal>>(re);
-			std::cout << " ";
-			print_symbol(p.symbol);
-		}
-	}
-	std::cout << std::endl;
-	for (size_t i = 0; i < a.size(); ++i)
-	{
-		auto& re = a[i];
-		if (std::holds_alternative<Appurupai::ast_node<Noterminal, Terminal>>(re))
-		{
-			auto& p = std::get<Appurupai::ast_node<Noterminal, Terminal>>(re);
-			print_symbol_imp(p, layout + 1);
-		}
-	}
-}
+using namespace Potato::Parser;
 
 int main()
 {
-	Appurupai::LR1<Noterminal, Terminal> lr1{
-		// start symbol
-		Noterminal::Exp,
-	{
-		// production rules {non-terminator, {production} }
-		{Noterminal::Exp, {Terminal::Num}},
-		{Noterminal::Exp, {Noterminal::Exp, Terminal::Add, Noterminal::Exp}},
-		{Noterminal::Exp, {Noterminal::Exp, Terminal::Multi, Noterminal::Exp}},
-	},
-	// priority
-	{{Terminal::Multi}, {Terminal::Add}}
-	};
-	
-	// define input terminator stream
-	std::vector<Terminal> t = { Terminal::Num, Terminal::Add, Terminal::Num, Terminal::Multi, Terminal::Num };
-
-	try {
-		// generate AST
-		auto re = Appurupai::generate_ast(lr1, t.begin(), t.end());
-
-		print_symbol_imp(re);
-	}
-	catch (const Appurupai::Error::generate_ast_unacceptable_error<Noterminal, Terminal>& e)
-	{
-		assert(false);
-	}
+	auto parser = sbnf::create(SBNF);
+	auto Number = parser.find_symbol(U"Number");
+	std::u32string Expression = U"1+2*4+(1+1)/2";
+	sbnf_processer sp(parser);
+	std::vector<int> Storage;
+	sp.analyze(Expression, [&](sbnf_processer::travel tra) {
+		if (tra.is_terminal())
+		{
+			if (tra.sym == *Number)
+				Storage.push_back(to_int(tra.token_data));
+		}
+		else {
+			switch (tra.noterminal.function_enum)
+			{
+			case 1: {
+				Storage[Storage.size() - 2] += Storage[Storage.size() - 1];
+				Storage.pop_back();
+			}break;
+			case 2: {
+				Storage[Storage.size() - 2] *= Storage[Storage.size() - 1];
+				Storage.pop_back();
+			}break;
+			case 3: {
+				Storage[Storage.size() - 2] /= Storage[Storage.size() - 1];
+				Storage.pop_back();
+			}break;
+			case 4: {
+				Storage[Storage.size() - 2] -= Storage[Storage.size() - 1];
+				Storage.pop_back();
+			}break;
+			default:
+				break;
+			}
+		}
+	});
+	int result = Storage[0];
+	std::cout << "1+2*4+(1+1)/2" << std::endl << "result :" << result << std::endl;
+	system("pause");
 	return 0;
 
 }

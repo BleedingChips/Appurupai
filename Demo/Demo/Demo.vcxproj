@@ -127,11 +127,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Appurupai\syntax.cpp" />
+    <ClCompile Include="..\..\Potato\lexical.cpp" />
+    <ClCompile Include="..\..\Potato\parser.cpp" />
+    <ClCompile Include="..\..\Potato\syntax.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Appurupai\syntax.h" />
+    <ClInclude Include="..\..\Potato\lexical.h" />
+    <ClInclude Include="..\..\Potato\parser.h" />
+    <ClInclude Include="..\..\Potato\range_set.h" />
+    <ClInclude Include="..\..\Potato\syntax.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

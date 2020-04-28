@@ -13,21 +13,36 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Appurupai">
-      <UniqueIdentifier>{ecdd4509-e4f2-4364-b311-052edc9a7c74}</UniqueIdentifier>
+    <Filter Include="Potato">
+      <UniqueIdentifier>{e09d1165-d87c-492c-bd67-893c25d9321d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Appurupai\syntax.cpp">
-      <Filter>Appurupai</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Potato\lexical.cpp">
+      <Filter>Potato</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Potato\parser.cpp">
+      <Filter>Potato</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Potato\syntax.cpp">
+      <Filter>Potato</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Appurupai\syntax.h">
-      <Filter>Appurupai</Filter>
+    <ClInclude Include="..\..\Potato\lexical.h">
+      <Filter>Potato</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Potato\parser.h">
+      <Filter>Potato</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Potato\range_set.h">
+      <Filter>Potato</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Potato\syntax.h">
+      <Filter>Potato</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
