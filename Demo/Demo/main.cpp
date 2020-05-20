@@ -9,10 +9,10 @@ Number := '[1-9][0-9]*'
 %%%
 $ := <Statement>
 <Statement> := Number
-<Statement> := <Statement> '+' <Statement> [1]
-<Statement> := <Statement> '*' <Statement> [2]
-<Statement> := <Statement> '/' <Statement> [3]
-<Statement> := <Statement> '-' <Statement> [4]
+<Statement> := <Statement> '+' <Statement> :[1]
+<Statement> := <Statement> '*' <Statement> :[2]
+<Statement> := <Statement> '/' <Statement> :[3]
+<Statement> := <Statement> '-' <Statement> :[4]
 <Statement> := '(' <Statement> ')'
 %%%
 ('/' '*') ('+' '-')
